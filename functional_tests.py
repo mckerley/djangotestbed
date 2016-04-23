@@ -27,8 +27,9 @@ class NewVisitorTest(unittest.TestCase):
 
 		inputbox.send_keys(Keys.ENTER)
 
-		table = self.browser.find_elements_by_tag_name('tr')
-		self.assertTrue(any(row.text == '1: Buy peacock feathers' for row in rows))
+		table = self.browser.find_element_by_id('id_list_table')
+		rows = self.browser.find_elements_by_tag_name('tr')
+		self.assertTrue(any(row.text == '1: Buy peacock feathers' for row in rows),"new todo item did not appear")
 
 
 		#Then Jim will add another item to his list
