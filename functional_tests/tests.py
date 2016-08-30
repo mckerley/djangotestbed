@@ -31,7 +31,12 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertEqual(inputbox.get_attribute('placeholder'), 'Enter a to-do item')
 
         inputbox.send_keys('Buy peacock feathers')
+
+        #When Jim presses enter he will see his list item added to the list and the url
+        #will reflect his change to a new specific unique url for his list
         inputbox.send_keys(Keys.ENTER)
+        jim_list_url = self.browser.current_url
+        self.assertRegex(jim_list_url, '/lists/.+')
 
         self.check_for_row_in_list_table('1: Buy peacock feathers')
 
@@ -44,6 +49,30 @@ class NewVisitorTest(LiveServerTestCase):
         self.check_for_row_in_list_table('1: Buy peacock feathers')
         self.check_for_row_in_list_table('2: Use peacock feathers to make a fly')
 
+        #Jim quits and a new person, Joe opens the website
+        self.browser.quit()
+        self.browser = webdriver.Firefox()
+
+        #Joe visits the website
+        self.browser.get(self.live_server_url)
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers',page_text)
+        self.assertNotIn('make a fly', page_text)
+
+        #Joe starts a new list with the following items: 1. Buy milk
+        inputbox = self.browser.find_element_by_id('id_new_name')
+        inputbox.send_keys('Buy milk')
+        inputbox.send_keys(Keys.ENTER)
+
+        #Joe has a unique URL
+        joe_url = self.browser.current_url
+        self.assertRegex(joe_url, '/lists/.+')
+        self.assertNotEqual(jim_list_url, joe_url)
+
+        #Again check there is not any residual list text
+        page_text = self.browser.find_element_by_tag_name('body').text
+        self.assertNotIn('Buy peacock feathers',page_text)
+        self.assertNotIn('make a fly', page_text)
 
         self.fail('Finish the test!')
 
