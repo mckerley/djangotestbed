@@ -52,6 +52,7 @@ class NewVisitorTest(LiveServerTestCase):
         #Jim quits and a new person, Joe opens the website
         self.browser.quit()
         self.browser = webdriver.Firefox()
+        self.browser.implicitly_wait(3)
 
         #Joe visits the website
         self.browser.get(self.live_server_url)
@@ -60,7 +61,7 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotIn('make a fly', page_text)
 
         #Joe starts a new list with the following items: 1. Buy milk
-        inputbox = self.browser.find_element_by_id('id_new_name')
+        inputbox = self.browser.find_element_by_id('id_new_item')
         inputbox.send_keys('Buy milk')
         inputbox.send_keys(Keys.ENTER)
 
