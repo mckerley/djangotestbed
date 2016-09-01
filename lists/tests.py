@@ -5,13 +5,15 @@ from django.template.loader import render_to_string
 
 from lists.views import home_page
 
-from lists.models import Item
+from lists.models import Item, List
 
 
 class ListViewTest(TestCase):
 	def test_displays_all_items(self):
-		Item.objects.create(text = 'itemey 1')
-		Item.objects.create(text = 'itemey 2')
+		list_ = List.objects.create()
+
+		Item.objects.create(text = 'itemey 1', list = list_)
+		Item.objects.create(text = 'itemey 2', list = list_)
 
 		response = self.client.get('/lists/the-only-list-in-the-world/')
 
@@ -21,15 +23,24 @@ class ListViewTest(TestCase):
 		response = self.client.get('/lists/the-only-list-in-the-world/')
 		self.assertTemplateUsed(response, 'list.html')
 
-class ItemModelTest(TestCase):
+class ListAndItemModelsTest(TestCase):
 	def test_saving_and_retrieving_items(self):
+		list_ = List()
+		list_.save()
+
+
 		first_item = Item()
 		first_item.text = "The first item's text"
+		first_item.list = list_
 		first_item.save()
 
 		second_item = Item()
 		second_item.text = "The second item's text"
+		second_item.list = list_
 		second_item.save()
+
+		saved_lists = List.objects.first()
+		self.assertEqual(saved_lists, list_)
 
 		saved_items = Item.objects.all()
 		self.assertEqual(saved_items.count(), 2)
@@ -38,8 +49,9 @@ class ItemModelTest(TestCase):
 		second_saved_item = saved_items[1]
 
 		self.assertEqual(first_saved_item.text, "The first item's text")
-
+		self.assertEqual(first_saved_item.list, list_)
 		self.assertEqual(second_saved_item.text,"The second item's text")
+		self.assertEqual(second_saved_item.list, list_)
 
 class NewListTest(TestCase):
 	def test_save_post_request(self):
