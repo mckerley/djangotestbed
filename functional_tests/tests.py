@@ -18,6 +18,16 @@ class NewVisitorTest(LiveServerTestCase):
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
 
+    def test_layout_and_styling(self):
+        self.browser.get(self.live_server_url)
+        self.browser.set_window_size(1024, 768)
+
+        inputbox = self.browser.find_element_by_id('id_new_name')
+        self.assertAlmostEqual(
+            inputbox.location['x'] + inputbox.size['width'] / 2, 512,
+            delta = 5
+        )
+
     def test_can_start_a_list_and_retrieve_it_later(self):
         #Jim will visit the website and check to see it is a todo site
         self.browser.get(self.live_server_url)
@@ -75,8 +85,5 @@ class NewVisitorTest(LiveServerTestCase):
         self.assertNotIn('Buy peacock feathers',page_text)
         self.assertNotIn('make a fly', page_text)
 
-        self.fail('Finish the test!')
-
-        #Then he will note he has a unique url
-
         #lastly he will exit
+        self.browser.quit()
