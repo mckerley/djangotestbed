@@ -4,10 +4,12 @@ from django.test import LiveServerTestCase
 import time
 import unittest
 
+
 class NewVisitorTest(LiveServerTestCase):
+    chromepath = "/home/michael/Downloads/chromedriver"
 
     def setUp(self):
-        self.browser = webdriver.Firefox()
+        self.browser = webdriver.Chrome(self.chromepath)
         self.browser.implicitly_wait(3)
 
     def tearDown(self):
@@ -61,7 +63,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         #Jim quits and a new person, Joe opens the website
         self.browser.quit()
-        self.browser = webdriver.Firefox()
+        self.browser = webdriver.Chrome(self.chromepath)
         self.browser.implicitly_wait(3)
 
         #Joe visits the website
